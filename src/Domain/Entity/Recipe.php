@@ -17,6 +17,9 @@ class Recipe implements RecipeImmutable
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
     private int $id;
 
+    #[ORM\OneToOne(inversedBy: "recipe", targetEntity: Dish::class)]
+    private ?Dish $dish = null;
+
     #[ORM\Column(type: "string")]
     private string $url;
 
@@ -72,6 +75,11 @@ class Recipe implements RecipeImmutable
     public function getInstructions(): array
     {
         return $this->instructions;
+    }
+
+    public function createDish(): Dish
+    {
+        return $this->dish = Dish::fromRecipe($this);
     }
 
     public function refresh(RecipeMicrodata $microdata): void

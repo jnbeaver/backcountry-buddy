@@ -8,7 +8,7 @@ use App\Infrastructure\Exception\EntityNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class RecipeRepository extends ServiceEntityRepository implements RecipeRepositoryInterface
+class RecipeRepository extends AbstractRepository implements RecipeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -18,45 +18,18 @@ class RecipeRepository extends ServiceEntityRepository implements RecipeReposito
     /** @inheritDoc */
     public function findOrFail(int $id): Recipe
     {
-        $recipe = $this->createQueryBuilder('r')
-            ->where('r.id = :id')
-            ->andWhere('r.deletedAt IS NULL')
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        if (!$recipe) {
-            throw new EntityNotFoundException($this->_class, $id);
-        }
-
-        return $recipe;
+        return parent::findOrFailBy($id);
     }
 
     /** @inheritDoc */
     public function findOrFailByUrl(string $url): Recipe
     {
-        $recipe = $this->createQueryBuilder('r')
-            ->where('r.url = :url')
-            ->andWhere('r.deletedAt IS NULL')
-            ->setParameter('url', $url)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        if (!$recipe) {
-            throw new EntityNotFoundException($this->_class, $url, 'URL');
-        }
-
-        return $recipe;
+        return parent::findOrFailBy($url, 'URL');
     }
 
     public function save(Recipe $recipe): void
     {
-        $em = $this->getEntityManager();
-
-        if (!$em->contains($recipe)) {
-            $em->persist($recipe);
-        }
-
-        $em->flush();
+        parent::saveOne($recipe);
     }
 
     public function delete(Recipe $recipe): void
