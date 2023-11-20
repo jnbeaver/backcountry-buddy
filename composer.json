@@ -7,15 +7,20 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "brick/schema": "*",
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
+        "guzzlehttp/guzzle": "^7.8",
+        "nesbot/carbon": "*",
         "symfony/console": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.3.*",
+        "symfony/messenger": "6.3.*",
         "symfony/runtime": "6.3.*",
-        "symfony/yaml": "6.3.*"
+        "symfony/yaml": "6.3.*",
+        "webmozart/assert": "^1.11"
     },
     "config": {
         "allow-plugins": {
