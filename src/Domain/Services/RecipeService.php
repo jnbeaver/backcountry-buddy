@@ -22,12 +22,17 @@ class RecipeService
             ->getContents();
 
         $things = SchemaReader::forAllFormats()->readHtml($html, $url);
+        $recipe = null;
 
-        Assert::true(
-            count($things) === 1 && $things[0] instanceof RecipeMicrodata,
-            "Microdata for recipe not found at '$url'."
-        );
+        foreach ($things as $thing) {
+            if ($thing instanceof RecipeMicrodata) {
+                $recipe = $thing;
+                break;
+            }
+        }
 
-        return $things[0];
+        Assert::notNull($recipe, "Microdata for recipe not found at '$url'.");
+
+        return $recipe;
     }
 }

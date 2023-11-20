@@ -25,21 +25,27 @@ class RecipeRepository extends ServiceEntityRepository implements RecipeReposito
             ->getOneOrNullResult();
 
         if (!$recipe) {
-            throw new EntityNotFoundException($this->class, $id);
+            throw new EntityNotFoundException($this->_class, $id);
         }
 
         return $recipe;
     }
 
     /** @inheritDoc */
-    public function findByUrl(string $url): ?Recipe
+    public function findOrFailByUrl(string $url): Recipe
     {
-        return $this->createQueryBuilder('r')
+        $recipe = $this->createQueryBuilder('r')
             ->where('r.url = :url')
             ->andWhere('r.deletedAt IS NULL')
             ->setParameter('url', $url)
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$recipe) {
+            throw new EntityNotFoundException($this->_class, $url, 'URL');
+        }
+
+        return $recipe;
     }
 
     public function save(Recipe $recipe): void

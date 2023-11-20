@@ -14,7 +14,12 @@ interface RecipeRepositoryInterface
      */
     public function findOrFail(int $id): Recipe;
 
-    public function findByUrl(string $url): ?Recipe;
+    /**
+     * @param string $url
+     * @return Recipe
+     * @throws EntityNotFoundException
+     */
+    public function findOrFailByUrl(string $url): Recipe;
 
     public function save(Recipe $recipe): void;
 

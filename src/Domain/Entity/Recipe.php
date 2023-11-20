@@ -8,18 +8,17 @@ use Brick\Schema\Interfaces\Recipe as RecipeMicrodata;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Webmozart\Assert\Assert;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 #[ORM\Table(name: "recipes")]
 #[ORM\UniqueConstraint(name: "url", columns:["url"])]
-class Recipe
+class Recipe implements RecipeImmutable
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "string", nullable: true)]
-    private ?string $url;
+    #[ORM\Column(type: "string")]
+    private string $url;
 
     #[ORM\Column(type: "string")]
     private string $title;
@@ -39,19 +38,13 @@ class Recipe
     #[ORM\Column(type: "datetime", nullable: true)]
     private DateTime $deletedAt;
 
-    private function __construct()
-    {
+    public function __construct(
+        string $url,
+        RecipeMicrodata $microdata
+    ) {
+        $this->url = $url;
+        $this->refresh($microdata);
         $this->createdAt = $this->updatedAt = Carbon::now();
-    }
-
-    public static function fromWebpageMicrodata(string $url, RecipeMicrodata $microdata): self
-    {
-        $recipe = new self();
-
-        $recipe->url = $url;
-        $recipe->refresh($microdata);
-
-        return $recipe;
     }
 
     public function getId(): int
@@ -59,7 +52,7 @@ class Recipe
         return $this->id;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -69,17 +62,13 @@ class Recipe
         return $this->title;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @inheritDoc */
     public function getIngredients(): array
     {
         return $this->ingredients;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @inheritDoc */
     public function getInstructions(): array
     {
         return $this->instructions;
@@ -87,8 +76,6 @@ class Recipe
 
     public function refresh(RecipeMicrodata $microdata): void
     {
-        Assert::notNull($this->url, 'Only recipes imported from a webpage can be refreshed.');
-
         $this->title = $microdata->name;
         $this->ingredients = $microdata->ingredients->count() > 0 ? $microdata->ingredients->getValues() : $microdata->recipeIngredient->getValues();
 
