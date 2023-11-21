@@ -21,6 +21,6 @@ class DishRepository extends AbstractRepository implements DishRepositoryInterfa
 
     public function save(Dish $dish): void
     {
-        parent::saveOne($dish);
+        parent::persistAndFlush($dish);
     }
 }

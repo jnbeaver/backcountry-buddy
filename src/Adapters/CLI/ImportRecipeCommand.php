@@ -2,9 +2,7 @@
 
 namespace App\Adapters\CLI;
 
-use App\Application\Command\CommandInterface;
 use App\Application\Command\ImportRecipe;
-use App\Domain\Entity\RecipeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,13 +10,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 #[AsCommand(
     name: 'bb:recipe:import',
     description: 'Imports a recipe from a webpage that exposes Schema.org microdata.',
-    hidden: false,
 )]
-class ImportRecipeCommand extends Command implements CommandInterface
+class ImportRecipeCommand extends Command
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus
@@ -36,16 +34,18 @@ class ImportRecipeCommand extends Command implements CommandInterface
     {
         $io = new SymfonyStyle($input, $output);
 
-        /** @var RecipeImmutable $recipe */
-        $recipe = $this->commandBus->dispatch(
-            new ImportRecipe(
-                $input->getArgument('url')
-            )
-        );
+        $io->write('Importing recipe...');
 
-        $io->write('Successfully imported recipe:');
-        $io->newLine();
-        $io->success($recipe->getTitle());
+        $recipe = $this->commandBus
+            ->dispatch(
+                new ImportRecipe(
+                    $input->getArgument('url')
+                )
+            )
+            ->last(HandledStamp::class)
+            ->getResult();
+
+        $io->success("Recipe '{$recipe->getTitle()}' imported successfully!");
 
         return 0;
     }

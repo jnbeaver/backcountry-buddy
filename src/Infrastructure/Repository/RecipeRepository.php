@@ -29,7 +29,7 @@ class RecipeRepository extends AbstractRepository implements RecipeRepositoryInt
 
     public function save(Recipe $recipe): void
     {
-        parent::saveOne($recipe);
+        parent::persistAndFlush($recipe);
     }
 
     public function delete(Recipe $recipe): void

@@ -2,15 +2,10 @@
 
 namespace App\Application\Command;
 
-class RefreshRecipe implements CommandInterface
+readonly class RefreshRecipe
 {
     public function __construct(
-        private readonly string $idOrUrl
+        public string $idOrUrl
     ) {
-    }
-
-    public function getIdOrUrl(): string
-    {
-        return $this->idOrUrl;
     }
 }

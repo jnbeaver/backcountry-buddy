@@ -2,10 +2,10 @@
 
 namespace App\Application\Command;
 
-readonly class ImportRecipe
+readonly class CreateDishFromRecipe
 {
     public function __construct(
-        public string $url
+        public int $recipeId
     ) {
     }
 }

@@ -9,22 +9,23 @@ use App\Domain\Services\RecipeService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class RefreshRecipeHandler
+readonly class RefreshRecipeHandler
 {
     public function __construct(
-        private readonly RepositoryRegistryInterface $repositoryRegistry,
-        private readonly RecipeService $recipeService
+        private RepositoryRegistryInterface $repositoryRegistry,
+        private RecipeService $recipeService
     ) {
     }
 
     public function __invoke(RefreshRecipe $command): RecipeImmutable
     {
         $recipeRepository = $this->repositoryRegistry->getRecipeRepository();
+        $id = $this->parseId($command->idOrUrl);
 
-        if (is_int($command->getIdOrUrl())) {
-            $recipe = $recipeRepository->findOrFail((int) $command->getIdOrUrl());
+        if ($id !== null) {
+            $recipe = $recipeRepository->findOrFail($id);
         } else {
-            $recipe = $recipeRepository->findOrFailByUrl($command->getIdOrUrl());
+            $recipe = $recipeRepository->findOrFailByUrl($command->idOrUrl);
         }
 
         $microdata = $this->recipeService->readMicrodata($recipe->getUrl());
@@ -33,5 +34,16 @@ class RefreshRecipeHandler
         $recipeRepository->save($recipe);
 
         return $recipe;
+    }
+
+    public function parseId(string $idOrUrl): ?int
+    {
+        $id = filter_var($idOrUrl, FILTER_VALIDATE_INT);
+
+        if ($id === false) {
+            return null;
+        }
+
+        return $id;
     }
 }

@@ -29,7 +29,7 @@ abstract class AbstractRepository extends ServiceEntityRepository
         return $entity;
     }
 
-    protected function saveOne(object $entity): void
+    protected function persistAndFlush(object $entity): void
     {
         $em = $this->getEntityManager();
 

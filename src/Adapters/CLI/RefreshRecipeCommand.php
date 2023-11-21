@@ -2,9 +2,7 @@
 
 namespace App\Adapters\CLI;
 
-use App\Application\Command\CommandInterface;
 use App\Application\Command\RefreshRecipe;
-use App\Domain\Entity\RecipeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,13 +10,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 #[AsCommand(
     name: 'bb:recipe:refresh',
     description: 'Refreshes a recipe from its parent webpage.',
-    hidden: false,
 )]
-class RefreshRecipeCommand extends Command implements CommandInterface
+class RefreshRecipeCommand extends Command
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus
@@ -36,16 +34,19 @@ class RefreshRecipeCommand extends Command implements CommandInterface
     {
         $io = new SymfonyStyle($input, $output);
 
-        /** @var RecipeImmutable $recipe */
-        $recipe = $this->commandBus->dispatch(
-            new RefreshRecipe(
-                $input->getArgument('idOrUrl')
-            )
-        );
+        $io->write('Refreshing recipe...');
 
-        $io->write('Successfully refreshed recipe:');
+        $recipe = $this->commandBus
+            ->dispatch(
+                new RefreshRecipe(
+                    $input->getArgument('idOrUrl')
+                )
+            )
+            ->last(HandledStamp::class)
+            ->getResult();
+
         $io->newLine();
-        $io->success($recipe->getTitle());
+        $io->success("Recipe '{$recipe->getTitle()}' refreshed successfully!");
 
         return 0;
     }

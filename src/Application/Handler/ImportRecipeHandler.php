@@ -10,18 +10,18 @@ use App\Domain\Services\RecipeService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class ImportRecipeHandler
+readonly class ImportRecipeHandler
 {
     public function __construct(
-        private readonly RepositoryRegistryInterface $repositoryRegistry,
-        private readonly RecipeService $recipeService
+        private RepositoryRegistryInterface $repositoryRegistry,
+        private RecipeService $recipeService
     ) {
     }
 
     public function __invoke(ImportRecipe $command): RecipeImmutable
     {
-        $microdata = $this->recipeService->readMicrodata($command->getUrl());
-        $recipe = new Recipe($command->getUrl(), $microdata);
+        $microdata = $this->recipeService->readMicrodata($command->url);
+        $recipe = new Recipe($command->url, $microdata);
 
         $this->repositoryRegistry
             ->getRecipeRepository()

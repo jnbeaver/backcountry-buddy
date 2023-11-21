@@ -8,29 +8,30 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DishRepository::class)]
-#[ORM\Table(name: "dishes")]
-#[ORM\UniqueConstraint(name: "recipe_id", columns:["recipe_id"])]
-class Dish
+#[ORM\Table(name: 'dishes')]
+#[ORM\UniqueConstraint(name: 'recipe_id', columns:['recipe_id'])]
+class Dish implements DishImmutable
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private int $id;
 
-    #[ORM\OneToOne(mappedBy: "dish", targetEntity: Recipe::class)]
+    #[ORM\OneToOne(inversedBy: 'dish', targetEntity: Recipe::class)]
+    #[ORM\JoinColumn(name: 'recipe_id', referencedColumnName: 'id')]
     private ?Recipe $recipe = null;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     private string $title;
 
-    #[ORM\Column(type: "simple_array")]
+    #[ORM\Column(type: 'simple_array')]
     private array $ingredients;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: 'datetime')]
     private DateTime $updatedAt;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private DateTime $deletedAt;
 
     /**
@@ -73,5 +74,22 @@ class Dish
     public function getIngredients(): array
     {
         return $this->ingredients;
+    }
+
+    public function refresh(): void
+    {
+        if (!$this->recipe) {
+            return;
+        }
+
+        $this->title = $this->recipe->getTitle();
+        $this->ingredients = $this->recipe->getIngredients();
+
+        $this->updatedAt = Carbon::now();
+    }
+
+    public function delete(): void
+    {
+        $this->deletedAt = Carbon::now();
     }
 }

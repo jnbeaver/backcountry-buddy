@@ -16,7 +16,6 @@ framework:
 
         routing:
             # Route your messages to the transports
-            'App\Application\Command\CommandInterface': sync
 
 # when@test:
 #    framework:
