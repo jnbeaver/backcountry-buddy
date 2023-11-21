@@ -18,7 +18,7 @@ readonly class CreateDishHandler
 
     public function __invoke(CreateDish $command): DishImmutable
     {
-        $dish = new Dish($command->title, $command->ingredients);
+        $dish = new Dish($command->title, $command->ingredients, $command->prep);
 
         $this->repositoryRegistry->getDishRepository()->save($dish);
 

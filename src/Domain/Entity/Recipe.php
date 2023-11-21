@@ -11,7 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 #[ORM\Table(name: 'recipes')]
-#[ORM\UniqueConstraint(name: 'url', columns:['url'])]
+#[ORM\UniqueConstraint(columns:['url'])]
+#[ORM\UniqueConstraint(columns:['title'])]
 class Recipe implements RecipeImmutable
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
@@ -26,10 +27,10 @@ class Recipe implements RecipeImmutable
     #[ORM\Column(type: 'string')]
     private string $title;
 
-    #[ORM\Column(type: 'simple_array')]
+    #[ORM\Column(type: 'simple_array', nullable: true)]
     private array $ingredients;
 
-    #[ORM\Column(type: 'simple_array')]
+    #[ORM\Column(type: 'simple_array', nullable: true)]
     private array $instructions;
 
     #[ORM\Column(type: 'datetime')]

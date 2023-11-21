@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DishRepository::class)]
 #[ORM\Table(name: 'dishes')]
-#[ORM\UniqueConstraint(name: 'recipe_id', columns:['recipe_id'])]
+#[ORM\UniqueConstraint(columns:['recipe_id'])]
+#[ORM\UniqueConstraint(columns:['title'])]
 class Dish implements DishImmutable
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
@@ -22,8 +23,11 @@ class Dish implements DishImmutable
     #[ORM\Column(type: 'string')]
     private string $title;
 
-    #[ORM\Column(type: 'simple_array')]
+    #[ORM\Column(type: 'simple_array', nullable: true)]
     private array $ingredients;
+
+    #[ORM\Column(type: 'simple_array', nullable: true)]
+    private array $prep;
 
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
@@ -37,19 +41,27 @@ class Dish implements DishImmutable
     /**
      * @param string $title
      * @param string[] $ingredients
+     * @param string[] $prep
      */
     public function __construct(
         string $title,
-        array $ingredients
+        array $ingredients,
+        array $prep
     ) {
         $this->title = $title;
         $this->ingredients = $ingredients;
+        $this->prep = $prep;
         $this->createdAt = $this->updatedAt = Carbon::now();
     }
 
-    public static function fromRecipe(Recipe $recipe): self
+    /**
+     * @param Recipe $recipe
+     * @param string[] $prep
+     * @return self
+     */
+    public static function fromRecipe(Recipe $recipe, array $prep): self
     {
-        $dish = new self($recipe->getTitle(), $recipe->getIngredients());
+        $dish = new self($recipe->getTitle(), $recipe->getIngredients(), $prep);
 
         $dish->recipe = $recipe;
 
@@ -71,9 +83,16 @@ class Dish implements DishImmutable
         return $this->title;
     }
 
+    /** @inheritDoc */
     public function getIngredients(): array
     {
         return $this->ingredients;
+    }
+
+    /** @inheritDoc */
+    public function getPrep(): array
+    {
+        return $this->prep;
     }
 
     public function refresh(): void

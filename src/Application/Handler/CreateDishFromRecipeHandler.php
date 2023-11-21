@@ -22,7 +22,7 @@ readonly class CreateDishFromRecipeHandler
             ->getRecipeRepository()
             ->findOrFail($command->recipeId);
 
-        $dish = Dish::fromRecipe($recipe);
+        $dish = Dish::fromRecipe($recipe, $command->prep);
 
         $this->repositoryRegistry->getDishRepository()->save($dish);
 

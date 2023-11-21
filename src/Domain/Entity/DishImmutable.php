@@ -14,4 +14,9 @@ interface DishImmutable
      * @return string[]
      */
     public function getIngredients(): array;
+
+    /**
+     * @return string[]
+     */
+    public function getPrep(): array;
 }

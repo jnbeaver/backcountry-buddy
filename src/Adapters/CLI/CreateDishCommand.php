@@ -39,11 +39,15 @@ class CreateDishCommand extends Command
         $recipeId = $input->getOption('recipe');
 
         if ($recipeId !== null) {
-            $command = new CreateDishFromRecipe($recipeId);
+            $command = new CreateDishFromRecipe(
+                $recipeId,
+                $this->askPrep($io)
+            );
         } else {
             $command = new CreateDish(
                 $this->askTitle($io),
-                $this->askIngredients($io)
+                $this->askIngredients($io),
+                $this->askPrep($io)
             );
         }
 
@@ -76,18 +80,38 @@ class CreateDishCommand extends Command
      */
     private function askIngredients(SymfonyStyle $io): array
     {
-        $ingredients = [];
+        return $this->askStringArray('Ingredient', $io);
+    }
+
+    /**
+     * @param SymfonyStyle $io
+     * @return string[]
+     */
+    private function askPrep(SymfonyStyle $io): array
+    {
+        return $this->askStringArray('Preparation Step', $io);
+    }
+
+    /**
+     * @param string $name
+     * @param SymfonyStyle $io
+     * @return string[]
+     */
+    private function askStringArray(string $name, SymfonyStyle $io): array
+    {
+        $result = [];
 
         do {
-            $ingredient = $io->ask(
+            $item = $io->ask(
                 sprintf(
-                    'Ingredient #%s%s',
-                    $num = count($ingredients) + 1,
+                    '%s #%s%s',
+                    $name,
+                    $num = count($result) + 1,
                     $num === 1 ? ' (leave empty to finish)' : ''
                 )
             );
-        } while (!empty($ingredient) && array_push($ingredients, $ingredient));
+        } while (!empty($item) && array_push($result, $item));
 
-        return $ingredients;
+        return $result;
     }
 }
