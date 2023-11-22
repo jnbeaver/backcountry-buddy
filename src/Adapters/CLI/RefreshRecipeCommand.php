@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -32,9 +31,9 @@ class RefreshRecipeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $io = new Style($input, $output);
 
-        $io->write('Refreshing recipe...');
+        $io->writeln('Refreshing recipe...');
 
         $recipe = $this->commandBus
             ->dispatch(
@@ -45,7 +44,6 @@ class RefreshRecipeCommand extends Command
             ->last(HandledStamp::class)
             ->getResult();
 
-        $io->newLine();
         $io->success("Recipe '{$recipe->getTitle()}' refreshed successfully!");
 
         return 0;
