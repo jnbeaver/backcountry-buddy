@@ -24,7 +24,7 @@ class RecipeRepository extends AbstractRepository implements RecipeRepositoryInt
     /** @inheritDoc */
     public function findOrFailByUrl(string $url): Recipe
     {
-        return parent::findOrFailBy($url, 'URL');
+        return parent::findOrFailBy($url, 'url', 'URL');
     }
 
     public function save(Recipe $recipe): void

@@ -2,6 +2,7 @@
 
 namespace App\Adapters\CLI;
 
+use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Style extends SymfonyStyle
@@ -29,5 +30,16 @@ class Style extends SymfonyStyle
         } while (!empty($answer) && array_push($answers, $answer));
 
         return $answers;
+    }
+
+    public function askRequired(string $question): string
+    {
+        return parent::ask($question, null, function ($answer) {
+            if (empty($answer)) {
+                throw new RuntimeException('This value is required.');
+            }
+
+            return $answer;
+        });
     }
 }

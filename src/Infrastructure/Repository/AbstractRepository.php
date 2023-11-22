@@ -9,21 +9,25 @@ abstract class AbstractRepository extends ServiceEntityRepository
 {
     /**
      * @param mixed $value
-     * @param string $column
+     * @param string $property
+     * @param string|null $column
      * @return object
      * @throws EntityNotFoundException
      */
-    protected function findOrFailBy(mixed $value, string $column = 'ID'): object
-    {
+    protected function findOrFailBy(
+        mixed $value,
+        string $property = 'id',
+        ?string $name = 'ID'
+    ): object {
         $entity = $this->createQueryBuilder('e')
-            ->where(sprintf('e.%s = :value', strtolower($column)))
+            ->where(sprintf('e.%s = :value', $property))
             ->andWhere('e.deletedAt IS NULL')
             ->setParameter('value', $value)
             ->getQuery()
             ->getOneOrNullResult();
 
         if (!$entity) {
-            throw new EntityNotFoundException($this->_class, $value, $column);
+            throw new EntityNotFoundException($this->_class, $value, $name ?? $property);
         }
 
         return $entity;

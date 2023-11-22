@@ -3,49 +3,36 @@
 namespace App\Adapters\CLI;
 
 use App\Application\Command\ImportRecipe;
+use App\Domain\Entity\RecipeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 #[AsCommand(
     name: 'bb:recipe:import',
     description: 'Imports a recipe from a webpage that exposes Schema.org microdata.',
 )]
-class ImportRecipeCommand extends Command
+class ImportRecipeCommand extends AbstractDoActionCommand
 {
-    public function __construct(
-        private readonly MessageBusInterface $commandBus
-    ) {
-        parent::__construct();
-    }
-
     protected function configure(): void
     {
         $this
             ->addArgument('url', InputArgument::REQUIRED, 'The webpage URL');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function initializeCommand(InputInterface $input, Style $io): ImportRecipe
     {
-        $io = new Style($input, $output);
+        return new ImportRecipe($input->getArgument('url'));
+    }
 
-        $io->writeln('Importing recipe...');
+    protected function getActionStartMessage(): string
+    {
+        return 'Importing recipe...';
+    }
 
-        $recipe = $this->commandBus
-            ->dispatch(
-                new ImportRecipe(
-                    $input->getArgument('url')
-                )
-            )
-            ->last(HandledStamp::class)
-            ->getResult();
-
-        $io->success("Recipe '{$recipe->getTitle()}' imported successfully!");
-
-        return 0;
+    protected function getActionSuccessMessage(object $result): string
+    {
+        /** @var RecipeImmutable $result */
+        return "Recipe '{$result->getTitle()}' imported successfully!";
     }
 }
