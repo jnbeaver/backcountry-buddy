@@ -14,5 +14,10 @@ interface DishRepositoryInterface
      */
     public function findOrFail(int $id): Dish;
 
+    /**
+     * @return Dish[]
+     */
+    public function findAll(): array;
+
     public function save(Dish $dish): void;
 }

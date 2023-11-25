@@ -19,6 +19,12 @@ class DishRepository extends AbstractRepository implements DishRepositoryInterfa
         return parent::findOrFailBy($id);
     }
 
+    /** @inheritDoc */
+    public function findAll(): array
+    {
+        return parent::findBy([], ['title' => 'asc']);
+    }
+
     public function save(Dish $dish): void
     {
         parent::persistAndFlush($dish);
