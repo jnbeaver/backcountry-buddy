@@ -35,9 +35,6 @@ class Dish implements DishImmutable
     #[ORM\Column(type: 'datetime')]
     private DateTime $updatedAt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private DateTime $deletedAt;
-
     /**
      * @param string $title
      * @param string[] $ingredients
@@ -105,10 +102,5 @@ class Dish implements DishImmutable
         $this->ingredients = $this->recipe->getIngredients();
 
         $this->updatedAt = Carbon::now();
-    }
-
-    public function delete(): void
-    {
-        $this->deletedAt = Carbon::now();
     }
 }

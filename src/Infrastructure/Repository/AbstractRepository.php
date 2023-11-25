@@ -10,7 +10,7 @@ abstract class AbstractRepository extends ServiceEntityRepository
     /**
      * @param mixed $value
      * @param string $property
-     * @param string|null $column
+     * @param string|null $name
      * @return object
      * @throws EntityNotFoundException
      */
@@ -19,12 +19,11 @@ abstract class AbstractRepository extends ServiceEntityRepository
         string $property = 'id',
         ?string $name = 'ID'
     ): object {
-        $entity = $this->createQueryBuilder('e')
-            ->where(sprintf('e.%s = :value', $property))
-            ->andWhere('e.deletedAt IS NULL')
-            ->setParameter('value', $value)
-            ->getQuery()
-            ->getOneOrNullResult();
+        if ($property === 'id') {
+            $entity = $this->find($value);
+        } else {
+            $entity = $this->findOneBy([$property => $value]);
+        }
 
         if (!$entity) {
             throw new EntityNotFoundException($this->_class, $value, $name ?? $property);
@@ -42,5 +41,10 @@ abstract class AbstractRepository extends ServiceEntityRepository
         }
 
         $em->flush();
+    }
+
+    protected function remove(object $entity): void
+    {
+        $this->getEntityManager()->remove($entity);
     }
 }

@@ -5,10 +5,12 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Entity\Dish;
 use App\Domain\Entity\Person;
 use App\Domain\Entity\Recipe;
+use App\Domain\Entity\Trip;
 use App\Domain\Repository\DishRepositoryInterface;
 use App\Domain\Repository\PersonRepositoryInterface;
 use App\Domain\Repository\RecipeRepositoryInterface;
 use App\Domain\Repository\RepositoryRegistryInterface;
+use App\Domain\Repository\TripRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class RepositoryRegistry implements RepositoryRegistryInterface
@@ -31,5 +33,10 @@ class RepositoryRegistry implements RepositoryRegistryInterface
     public function getRecipeRepository(): RecipeRepositoryInterface
     {
         return $this->managerRegistry->getRepository(Recipe::class);
+    }
+
+    public function getTripRepository(): TripRepositoryInterface
+    {
+        return $this->managerRegistry->getRepository(Trip::class);
     }
 }

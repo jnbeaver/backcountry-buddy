@@ -9,4 +9,6 @@ interface RepositoryRegistryInterface
     public function getPersonRepository(): PersonRepositoryInterface;
 
     public function getRecipeRepository(): RecipeRepositoryInterface;
+
+    public function getTripRepository(): TripRepositoryInterface;
 }

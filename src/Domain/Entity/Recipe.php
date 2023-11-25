@@ -18,7 +18,7 @@ class Recipe implements RecipeImmutable
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private int $id;
 
-    #[ORM\OneToOne(mappedBy: 'recipe', targetEntity: Dish::class, cascade: ['persist'])]
+    #[ORM\OneToOne(mappedBy: 'recipe', targetEntity: Dish::class, cascade: ['persist', 'remove'])]
     private ?Dish $dish = null;
 
     #[ORM\Column(type: 'string')]
@@ -38,9 +38,6 @@ class Recipe implements RecipeImmutable
 
     #[ORM\Column(type: 'datetime')]
     private DateTime $updatedAt;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private DateTime $deletedAt;
 
     public function __construct(
         string $url,
@@ -101,12 +98,5 @@ class Recipe implements RecipeImmutable
         }
 
         $this->updatedAt = Carbon::now();
-    }
-
-    public function delete(): void
-    {
-        $this->deletedAt = Carbon::now();
-
-        $this->dish?->delete();
     }
 }

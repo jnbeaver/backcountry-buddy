@@ -34,8 +34,6 @@ class RecipeRepository extends AbstractRepository implements RecipeRepositoryInt
 
     public function delete(Recipe $recipe): void
     {
-        $recipe->delete();
-
-        $this->save($recipe);
+        parent::remove($recipe);
     }
 }

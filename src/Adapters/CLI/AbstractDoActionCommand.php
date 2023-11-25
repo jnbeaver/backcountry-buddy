@@ -23,6 +23,7 @@ abstract class AbstractDoActionCommand extends Command
         $command = $this->initializeCommand($input, $io);
 
         $io->writeln($this->getActionStartMessage());
+        $io->newLine();
 
         $result = $this->commandBus
             ->dispatch($command)
