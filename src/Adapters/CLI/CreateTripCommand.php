@@ -37,7 +37,7 @@ class CreateTripCommand extends AbstractDoActionCommand
     {
         $io->section('Itinerary');
 
-        $type = ($tripTypes = TripType::asChoice())[$io->choice('Type', array_keys($tripTypes))];
+        $type = $io->choiceAssoc('Type', TripType::asChoice());
         $location = $io->askRequired('Location', $this->tripService->getExistingTripLocations());
         $startDate = $io->askDate('Start Date');
         $endDate = $io->askDate('End Date', $startDate);
@@ -56,37 +56,21 @@ class CreateTripCommand extends AbstractDoActionCommand
 
         $io->section('Meal Plan');
 
-        $dishes = (new Collection($this->dishService->getAll()))
+        $dishIdsByName = (new Collection($this->dishService->getAll()))
             ->keyBy(fn (DishImmutable $dish) => $dish->getTitle())
-            ->map(fn (DishImmutable $dish) => $dish->getId());
+            ->map(fn (DishImmutable $dish) => $dish->getId())
+            ->all();
 
         $mealPlan = [];
 
         foreach (CarbonPeriod::create($startDate, '1 day', $endDate) as $date) {
             foreach (MealType::cases() as $mealType) {
-                $question = new ChoiceQuestion(
+                $mealPlan[$date->toDateString()][$mealType->value] = $io->choiceAssoc(
                     sprintf('%s %s', $date->format('n/j/y'), $mealType->name),
-                    $dishes->keys()->all()
+                    $dishIdsByName,
+                    true,
+                    true
                 );
-
-                $question->setMultiselect(true);
-
-                // override default validator to handle empty answers
-                $defaultValidator = $question->getValidator();
-                $question->setValidator(function (?string $answer) use ($defaultValidator) {
-                    if ($answer === null || $answer === '') {
-                        return [];
-                    }
-
-                    return $defaultValidator($answer);
-                });
-
-                $dishNames = $io->askQuestion($question);
-
-                $mealPlan[$date->toDateString()][$mealType->value] = $dishes
-                    ->intersectByKeys((new Collection($dishNames))->flip())
-                    ->values()
-                    ->all();
             }
         }
 

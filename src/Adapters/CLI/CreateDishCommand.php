@@ -69,12 +69,14 @@ class CreateDishCommand extends AbstractDoActionCommand
      */
     private function askRequiredGear(Style $io): array
     {
-        $gearByName = (new Collection($this->gearService->getAll()))
-            ->keyBy(fn (GearItemImmutable $gear) => $gear->getName());
-
-        return $gearByName
-            ->only($io->choice('Required Gear', $gearByName->keys()->all(), [], true))
-            ->map(fn (GearItemImmutable $gear) => $gear->getId())
-            ->all();
+        return $io->choiceAssoc(
+            'Required Gear',
+            (new Collection($this->gearService->getAll()))
+                ->keyBy(fn (GearItemImmutable $gear) => $gear->getName())
+                ->map(fn (GearItemImmutable $gear) => $gear->getId())
+                ->all(),
+            true,
+            true
+        ) ?? [];
     }
 }
