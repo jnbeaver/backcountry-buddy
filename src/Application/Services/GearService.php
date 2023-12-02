@@ -2,10 +2,10 @@
 
 namespace App\Application\Services;
 
-use App\Domain\Entity\DishImmutable;
+use App\Domain\Entity\GearItemImmutable;
 use App\Domain\Repository\RepositoryRegistryInterface;
 
-readonly class DishService
+readonly class GearService
 {
     public function __construct(
         private RepositoryRegistryInterface $repositoryRegistry,
@@ -13,10 +13,10 @@ readonly class DishService
     }
 
     /**
-     * @return DishImmutable[]
+     * @return GearItemImmutable[]
      */
     public function getAll(): array
     {
-        return $this->repositoryRegistry->getDishRepository()->findAll();
+        return $this->repositoryRegistry->getGearItemRepository()->findAll();
     }
 }

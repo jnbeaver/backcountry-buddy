@@ -37,7 +37,7 @@ class CreateTripCommand extends AbstractDoActionCommand
     {
         $io->section('Itinerary');
 
-        $type = ($tripTypes = TripType::asMap())[$io->choice('Type', array_keys($tripTypes))];
+        $type = ($tripTypes = TripType::asChoice())[$io->choice('Type', array_keys($tripTypes))];
         $location = $io->askRequired('Location', $this->tripService->getExistingTripLocations());
         $startDate = $io->askDate('Start Date');
         $endDate = $io->askDate('End Date', $startDate);
@@ -83,7 +83,7 @@ class CreateTripCommand extends AbstractDoActionCommand
 
                 $dishNames = $io->askQuestion($question);
 
-                $mealPlan[$date->format('Y-m-d')][$mealType->value] = $dishes
+                $mealPlan[$date->toDateString()][$mealType->value] = $dishes
                     ->intersectByKeys((new Collection($dishNames))->flip())
                     ->values()
                     ->all();

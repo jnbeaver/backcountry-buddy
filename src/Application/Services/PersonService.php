@@ -5,10 +5,10 @@ namespace App\Application\Services;
 use App\Domain\Entity\PersonImmutable;
 use App\Domain\Repository\RepositoryRegistryInterface;
 
-class PersonService
+readonly class PersonService
 {
     public function __construct(
-        private readonly RepositoryRegistryInterface $repositoryRegistry
+        private RepositoryRegistryInterface $repositoryRegistry
     ) {
     }
 

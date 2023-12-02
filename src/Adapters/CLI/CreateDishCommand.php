@@ -4,10 +4,14 @@ namespace App\Adapters\CLI;
 
 use App\Application\Command\CreateDish;
 use App\Application\Command\CreateDishFromRecipe;
+use App\Application\Services\GearService;
 use App\Domain\Entity\DishImmutable;
+use App\Domain\Entity\GearItemImmutable;
+use Illuminate\Support\Collection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'bb:dish:create',
@@ -15,6 +19,13 @@ use Symfony\Component\Console\Input\InputOption;
 )]
 class CreateDishCommand extends AbstractDoActionCommand
 {
+    public function __construct(
+        MessageBusInterface $commandBus,
+        private readonly GearService $gearService
+    ) {
+        parent::__construct($commandBus);
+    }
+
     protected function configure(): void
     {
         $this
@@ -28,14 +39,16 @@ class CreateDishCommand extends AbstractDoActionCommand
         if ($recipeId !== null) {
             return new CreateDishFromRecipe(
                 $recipeId,
-                $io->askMany('Preparation Step')
+                $io->askMany('Preparation Step'),
+                $this->askRequiredGear($io)
             );
         }
 
         return new CreateDish(
             $io->askRequired('Title'),
             $io->askMany('Ingredient'),
-            $io->askMany('Preparation Step')
+            $io->askMany('Preparation Step'),
+            $this->askRequiredGear($io)
         );
     }
 
@@ -48,5 +61,20 @@ class CreateDishCommand extends AbstractDoActionCommand
     {
         /** @var DishImmutable $result */
         return "Dish '{$result->getTitle()}' created successfully!";
+    }
+
+    /**
+     * @param Style $io
+     * @return int[]
+     */
+    private function askRequiredGear(Style $io): array
+    {
+        $gearByName = (new Collection($this->gearService->getAll()))
+            ->keyBy(fn (GearItemImmutable $gear) => $gear->getName());
+
+        return $gearByName
+            ->only($io->choice('Required Gear', $gearByName->keys()->all(), [], true))
+            ->map(fn (GearItemImmutable $gear) => $gear->getId())
+            ->all();
     }
 }

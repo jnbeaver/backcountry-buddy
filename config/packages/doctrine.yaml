@@ -20,7 +20,13 @@ doctrine:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Domain/Entity'
                 prefix: 'App\Domain\Entity'
-                alias: Domain
+                alias: Entity
+            App\Domain\ValueObject:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Domain/ValueObject'
+                prefix: 'App\Domain\ValueObject'
+                alias: ValueObject
 
 when@test:
     doctrine:

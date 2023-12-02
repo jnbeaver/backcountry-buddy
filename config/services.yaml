@@ -10,7 +10,10 @@ services:
         exclude:
             - '../src/Application/Command/'
             - '../src/Domain/Entity/'
+            - '../src/Domain/Enum/'
+            - '../src/Domain/ValueObject/'
             - '../src/Infrastructure/Exception/'
             - '../src/Kernel.php'
 
     GuzzleHttp\Client: ~
+    Symfony\Component\ExpressionLanguage\ExpressionLanguage: ~

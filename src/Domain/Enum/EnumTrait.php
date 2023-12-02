@@ -4,7 +4,7 @@ namespace App\Domain\Enum;
 
 trait EnumTrait
 {
-    public static function asMap(): array
+    public static function asChoice(): array
     {
         $cases = self::cases();
 

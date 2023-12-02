@@ -19,4 +19,9 @@ interface DishImmutable
      * @return string[]
      */
     public function getPrep(): array;
+
+    /**
+     * @return GearItemImmutable[]
+     */
+    public function getRequiredGear(): array;
 }

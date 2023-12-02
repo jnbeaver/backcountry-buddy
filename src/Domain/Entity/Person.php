@@ -35,6 +35,11 @@ class Person implements PersonImmutable
         return $this->name;
     }
 
+    public function isAdult(): bool
+    {
+        return !$this->isChild;
+    }
+
     public function isChild(): bool
     {
         return $this->isChild;

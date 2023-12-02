@@ -5,12 +5,52 @@ namespace App\Adapters\CLI;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use DateTime;
+use Illuminate\Support\Collection;
 use RuntimeException;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Style extends SymfonyStyle
 {
+    public function choiceAssoc(
+        string $question,
+        array $choices,
+        bool $optional = false,
+        bool $multiselect = false
+    ): mixed {
+        $question = new ChoiceQuestion(
+            sprintf('%s%s', $question, $optional ? ' (optional)' : ''),
+            array_keys($choices)
+        );
+
+        $question->setMultiselect($multiselect);
+
+        if ($optional) {
+            // override default validator to handle empty answers
+            $defaultValidator = $question->getValidator();
+            $question->setValidator(function (?string $answer) use ($defaultValidator) {
+                if ($answer === null || $answer === '') {
+                    return null;
+                }
+
+                return $defaultValidator($answer);
+            });
+        }
+
+        $answer = $this->askQuestion($question);
+
+        if ($optional && empty($answer)) {
+            return null;
+        }
+
+        if ($multiselect) {
+            return array_intersect_key($choices, array_flip($answer));
+        }
+
+        return $choices[$answer];
+    }
+
     public function askDate(string $question, ?DateTime $after = null): DateTime
     {
         return $this->ask($question, null, function (string $answer) use ($after) {

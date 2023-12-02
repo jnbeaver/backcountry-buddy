@@ -6,6 +6,7 @@ use App\Application\Command\CreateDishFromRecipe;
 use App\Domain\Entity\Dish;
 use App\Domain\Entity\DishImmutable;
 use App\Domain\Repository\RepositoryRegistryInterface;
+use Illuminate\Support\Collection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -22,7 +23,15 @@ readonly class CreateDishFromRecipeHandler
             ->getRecipeRepository()
             ->findOrFail($command->recipeId);
 
-        $dish = Dish::fromRecipe($recipe, $command->prep);
+        $dish = Dish::fromRecipe(
+            $recipe,
+            $command->prep,
+            (new Collection($command->gearItemIds))
+                ->map(
+                    fn (int $gearItemId) => $this->repositoryRegistry->getGearItemRepository()->findOrFail($gearItemId)
+                )
+                ->all()
+        );
 
         $this->repositoryRegistry->getDishRepository()->save($dish);
 
