@@ -7,7 +7,7 @@ use App\Domain\Entity\TripImmutable;
 
 readonly class TripOverview implements Section
 {
-    private const DATE_FORMAT = 'l, F jS, Y';
+    private const DATE_FORMAT = 'l, n/j/y';
 
     public function __construct(
         private TripImmutable $trip
@@ -17,7 +17,7 @@ readonly class TripOverview implements Section
     public function getContent(): ?string
     {
         return sprintf(
-            "%s\n%s - %s\n",
+            "%s\n%s to %s\n",
             Markdown::header1("Trip to {$this->trip->getLocation()}"),
             $this->trip->getStartDate()->format(self::DATE_FORMAT),
             $this->trip->getEndDate()->format(self::DATE_FORMAT)

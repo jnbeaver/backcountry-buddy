@@ -12,6 +12,7 @@ use App\Domain\ValueObject\TripPlan\GearList;
 use App\Domain\ValueObject\TripPlan\MealPlan;
 use App\Domain\ValueObject\TripPlan\RecipeHardCopy;
 use App\Domain\ValueObject\TripPlan\TripOverview;
+use App\Domain\ValueObject\TripPlan\WeatherForecast;
 use Illuminate\Support\Collection;
 use Webmozart\Assert\Assert;
 
@@ -38,9 +39,13 @@ readonly class TripPlan
         return [
             new Chapter([
                 new TripOverview($this->trip),
+                new WeatherForecast($this->trip),
                 new GearList($this->trip, $this->gear, $this->tripCriteriaService),
             ]),
-            new Chapter([new MealPlan($this->trip)]),
+            new Chapter([
+                new WeatherForecast($this->trip),
+                new MealPlan($this->trip),
+            ]),
             ...(new Collection($this->trip->getMeals()))
                 ->map(fn (Meal $meal) => $meal->getDishes())
                 ->flatten(1)

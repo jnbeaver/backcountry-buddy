@@ -51,14 +51,12 @@ class Markdown
         );
     }
 
-    public static function table(array $data): string
+    public static function table(array $header, array $rows): string
     {
-        $headerData = array_shift($data);
-
         return sprintf(
             "%s%s\n",
-            self::tableHeader($headerData),
-            implode('', array_map(fn (array $rowData) => self::tableRow($rowData), $data))
+            self::tableHeader($header),
+            implode('', array_map(fn (array $row) => self::tableRow($row), $rows))
         );
     }
 
@@ -73,20 +71,20 @@ class Markdown
         );
     }
 
-    private static function tableHeader(array $headerData): string
+    private static function tableHeader(array $header): string
     {
         return sprintf(
             "| %s |\n| %s |",
-            implode(' | ', $headerData),
-            implode(' | ', array_fill(0, count($headerData), '---'))
+            implode(' | ', $header),
+            implode(' | ', array_fill(0, count($header), '---'))
         );
     }
 
-    private static function tableRow(array $rowData): string
+    private static function tableRow(array $row): string
     {
         return sprintf(
             "\n| %s |",
-            implode(' | ', $rowData)
+            implode(' | ', $row)
         );
     }
 }

@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
 
 readonly class MealPlan implements Section
 {
+    private const DATE_FORMAT = 'D, n/j';
+
     public function __construct(
         private TripImmutable $trip
     ) {
@@ -25,14 +27,8 @@ readonly class MealPlan implements Section
             return null;
         }
 
-        $dateFormat = 'D, n/j';
-
-        if (!Carbon::instance($this->trip->getStartDate())->isSameYear($this->trip->getEndDate())) {
-            $dateFormat .= '/y';
-        }
-
         $dates = (new Collection($this->trip->getDays()))
-            ->map(fn (Carbon $date) => $date->format($dateFormat));
+            ->map(fn (Carbon $date) => $date->format(self::DATE_FORMAT));
 
         $mealTypes = (new Collection(MealType::cases()))
             ->map(fn (MealType $mealType) => $mealType->name)
@@ -45,7 +41,7 @@ readonly class MealPlan implements Section
             ->values();
 
         $mealsByDateAndType = $meals
-            ->groupBy(fn (Meal $meal) => $meal->getDate()->format($dateFormat))
+            ->groupBy(fn (Meal $meal) => $meal->getDate()->format(self::DATE_FORMAT))
             ->map(function (Collection $dateMeals) use ($mealTypes) {
                 return $mealTypes
                     ->flip()
@@ -63,23 +59,20 @@ readonly class MealPlan implements Section
 
         return sprintf(
             "%s\n%s",
-            Markdown::header3('Meal Plan'),
-            Markdown::table([
+            Markdown::header2('Meal Plan'),
+            Markdown::table(
                 array_merge(['Date'], $mealTypes->all()),
-                ...$dates
+                $dates
                     ->flip()
                     ->map(fn (string $date) => new Collection())
                     ->merge($mealsByDateAndType)
                     ->filter(fn (Collection $meals) => $meals->isNotEmpty())
                     ->map(function (Collection $meals, string $date) {
-                        return $meals
-                            ->prepend($date)
-                            ->values()
-                            ->all();
+                        return $meals->prepend($date)->values()->all();
                     })
                     ->values()
                     ->all()
-            ])
+            )
         );
     }
 }
