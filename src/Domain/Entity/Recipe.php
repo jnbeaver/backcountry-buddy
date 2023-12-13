@@ -27,10 +27,10 @@ class Recipe implements RecipeImmutable
     #[ORM\Column(type: 'string')]
     private string $title;
 
-    #[ORM\Column(type: 'simple_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private array $ingredients;
 
-    #[ORM\Column(type: 'simple_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private array $instructions;
 
     #[ORM\Column(type: 'datetime')]
@@ -56,6 +56,14 @@ class Recipe implements RecipeImmutable
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getSource(): string
+    {
+        $hostParts = explode('.', parse_url($this->url, PHP_URL_HOST));
+        $tldParts = array_slice($hostParts, -2);
+
+        return implode('.', $tldParts);
     }
 
     public function getTitle(): string

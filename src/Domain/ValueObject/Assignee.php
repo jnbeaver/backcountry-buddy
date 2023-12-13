@@ -38,4 +38,9 @@ readonly class Assignee
     {
         return $this->personId;
     }
+
+    public function isNull(): bool
+    {
+        return $this->type === null && $this->personId === null;
+    }
 }

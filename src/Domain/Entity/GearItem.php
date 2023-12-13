@@ -60,6 +60,10 @@ class GearItem implements GearItemImmutable
 
     public function getAssignee(): ?Assignee
     {
+        if ($this->assignee === null || $this->assignee->isNull()) {
+            return null;
+        }
+
         return $this->assignee;
     }
 }

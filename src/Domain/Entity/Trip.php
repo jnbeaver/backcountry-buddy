@@ -6,6 +6,7 @@ use App\Domain\Enum\MealType;
 use App\Domain\Enum\TripType;
 use App\Infrastructure\Repository\TripRepository;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -148,5 +149,10 @@ class Trip implements TripImmutable
     public function getMeals(): array
     {
         return $this->meals->toArray();
+    }
+
+    public function getDays(): CarbonPeriod
+    {
+        return CarbonPeriod::create($this->startDate, '1 day', $this->endDate);
     }
 }

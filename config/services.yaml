@@ -1,4 +1,5 @@
 parameters:
+    app.trip_plan.css_file: '%kernel.project_dir%/public/css/trip_plan.css'
 
 services:
     _defaults:
@@ -15,5 +16,8 @@ services:
             - '../src/Infrastructure/Exception/'
             - '../src/Kernel.php'
 
+    App\Component\Dompdf\DompdfFactory: ~
+    Clegginabox\PDFMerger\PDFMerger: ~
     GuzzleHttp\Client: ~
+    Michelf\MarkdownExtra: ~
     Symfony\Component\ExpressionLanguage\ExpressionLanguage: ~

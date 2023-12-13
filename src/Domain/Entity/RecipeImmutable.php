@@ -8,6 +8,8 @@ interface RecipeImmutable
 
     public function getUrl(): string;
 
+    public function getSource(): string;
+
     public function getTitle(): string;
 
     /**
