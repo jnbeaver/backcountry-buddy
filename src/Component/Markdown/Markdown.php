@@ -9,6 +9,17 @@ class Markdown
         return "**$text**";
     }
 
+    public static function tasklist(array $items): string
+    {
+        return sprintf(
+            "%s\n",
+            implode(
+                "\n",
+                array_map(fn (string $item) => "- [ ] $item", $items)
+            )
+        );
+    }
+
     public static function header1(string $title): string
     {
         return "# $title\n";

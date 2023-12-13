@@ -23,7 +23,11 @@ readonly class PlanTripHandler
             ->getTripRepository()
             ->findOrFail($command->id);
 
-        $this->tripPlanService->create($trip, $command->filename);
+        $this->tripPlanService->create(
+            $command->filename,
+            $trip,
+            $this->repositoryRegistry->getGearItemRepository()->findAll()
+        );
 
         return $trip;
     }

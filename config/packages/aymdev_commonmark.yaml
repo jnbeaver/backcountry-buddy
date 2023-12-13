@@ -1,0 +1,4 @@
+aymdev_commonmark:
+  converters:
+    markdown_converter:
+      type: 'github'

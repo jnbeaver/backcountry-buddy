@@ -3,18 +3,30 @@
 namespace App\Domain\ValueObject;
 
 use App\Domain\Entity\Dish;
+use App\Domain\Entity\GearItemImmutable;
 use App\Domain\Entity\Meal;
-use App\Domain\Entity\Trip;
+use App\Domain\Entity\TripImmutable;
+use App\Domain\Services\TripCriteriaService;
 use App\Domain\ValueObject\TripPlan\Chapter;
+use App\Domain\ValueObject\TripPlan\GearList;
 use App\Domain\ValueObject\TripPlan\MealPlan;
 use App\Domain\ValueObject\TripPlan\RecipeHardCopy;
 use Illuminate\Support\Collection;
+use Webmozart\Assert\Assert;
 
 readonly class TripPlan
 {
+    /**
+     * @param TripImmutable $trip
+     * @param GearItemImmutable[] $gear
+     * @param TripCriteriaService $tripCriteriaService
+     */
     public function __construct(
-        private Trip $trip
+        private TripImmutable $trip,
+        private array $gear,
+        private TripCriteriaService $tripCriteriaService
     ) {
+        Assert::allIsInstanceOf($gear, GearItemImmutable::class);
     }
 
     /**
@@ -23,6 +35,9 @@ readonly class TripPlan
     public function getChapters(): array
     {
         return [
+            new Chapter([
+                new GearList($this->trip, $this->gear, $this->tripCriteriaService),
+            ]),
             new Chapter([new MealPlan($this->trip)]),
             ...(new Collection($this->trip->getMeals()))
                 ->map(fn (Meal $meal) => $meal->getDishes())

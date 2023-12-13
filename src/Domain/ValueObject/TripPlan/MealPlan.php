@@ -5,7 +5,7 @@ namespace App\Domain\ValueObject\TripPlan;
 use App\Component\Markdown\Markdown;
 use App\Domain\Entity\Dish;
 use App\Domain\Entity\Meal;
-use App\Domain\Entity\Trip;
+use App\Domain\Entity\TripImmutable;
 use App\Domain\Enum\MealType;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 readonly class MealPlan implements Section
 {
     public function __construct(
-        private Trip $trip
+        private TripImmutable $trip
     ) {
     }
 

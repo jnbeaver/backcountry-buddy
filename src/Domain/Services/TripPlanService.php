@@ -3,11 +3,12 @@
 namespace App\Domain\Services;
 
 use App\Component\Dompdf\DompdfFactory;
-use App\Domain\Entity\Trip;
+use App\Domain\Entity\GearItemImmutable;
+use App\Domain\Entity\TripImmutable;
 use App\Domain\ValueObject\TripPlan;
 use Clegginabox\PDFMerger\PDFMerger;
 use Illuminate\Support\Collection;
-use Michelf\MarkdownExtra;
+use League\CommonMark\MarkdownConverter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -16,7 +17,8 @@ readonly class TripPlanService
     private string $cssFilename;
 
     public function __construct(
-        private MarkdownExtra $markdownExtra,
+        private TripCriteriaService $tripCriteriaService,
+        private MarkdownConverter $markdownConverter,
         private DompdfFactory $dompdfFactory,
         private Filesystem $filesystem,
         private PDFMerger $pdfMerger,
@@ -25,9 +27,17 @@ readonly class TripPlanService
         $this->cssFilename = $cssFilename;
     }
 
-    public function create(Trip $trip, string $filename): void
-    {
-        $tripPlan = new TripPlan($trip);
+    /**
+     * @param string $filename
+     * @param TripImmutable $trip
+     * @param GearItemImmutable[] $gear
+     */
+    public function create(
+        string $filename,
+        TripImmutable $trip,
+        array $gear
+    ): void {
+        $tripPlan = new TripPlan($trip, $gear, $this->tripCriteriaService);
         $chapterFilenames = new Collection();
 
         foreach ($tripPlan->getChapters() as $i => $chapter) {
@@ -37,7 +47,7 @@ readonly class TripPlanService
                 continue;
             }
 
-            $htmlContent = $this->markdownExtra->transform($markdown);
+            $htmlContent = $this->markdownConverter->convert($markdown);
             $css = $this->cssFilename ? file_get_contents($this->cssFilename) : '';
 
             $html = <<<HTML

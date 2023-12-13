@@ -1,4 +1,7 @@
 {
+    "aymdev/commonmark-bundle": {
+        "version": "v2.1.0"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.10",
         "recipe": {
