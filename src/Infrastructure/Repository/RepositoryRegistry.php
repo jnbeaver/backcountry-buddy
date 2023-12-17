@@ -6,12 +6,14 @@ use App\Domain\Entity\Dish;
 use App\Domain\Entity\GearItem;
 use App\Domain\Entity\Person;
 use App\Domain\Entity\Recipe;
+use App\Domain\Entity\Task;
 use App\Domain\Entity\Trip;
 use App\Domain\Repository\DishRepositoryInterface;
 use App\Domain\Repository\GearItemRepositoryInterface;
 use App\Domain\Repository\PersonRepositoryInterface;
 use App\Domain\Repository\RecipeRepositoryInterface;
 use App\Domain\Repository\RepositoryRegistryInterface;
+use App\Domain\Repository\TaskRepositoryInterface;
 use App\Domain\Repository\TripRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,6 +42,11 @@ readonly class RepositoryRegistry implements RepositoryRegistryInterface
     public function getRecipeRepository(): RecipeRepositoryInterface
     {
         return $this->managerRegistry->getRepository(Recipe::class);
+    }
+
+    public function getTaskRepository(): TaskRepositoryInterface
+    {
+        return $this->managerRegistry->getRepository(Task::class);
     }
 
     public function getTripRepository(): TripRepositoryInterface

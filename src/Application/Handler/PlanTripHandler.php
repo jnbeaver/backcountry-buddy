@@ -26,7 +26,8 @@ readonly class PlanTripHandler
         $this->tripPlanService->create(
             $command->filename,
             $trip,
-            $this->repositoryRegistry->getGearItemRepository()->findAll()
+            $this->repositoryRegistry->getGearItemRepository()->findAll(),
+            $this->repositoryRegistry->getTaskRepository()->findAll()
         );
 
         return $trip;

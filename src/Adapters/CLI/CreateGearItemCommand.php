@@ -10,10 +10,8 @@ use App\Domain\Entity\PersonImmutable;
 use App\Domain\Enum\AssigneeType;
 use App\Domain\Enum\GearInclusionFrequency;
 use Illuminate\Support\Collection;
-use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
@@ -38,23 +36,10 @@ class CreateGearItemCommand extends AbstractDoActionCommand
         $tripCriteriaExpression = null;
 
         if ($inclusionFrequency === GearInclusionFrequency::Sometimes) {
-            $question = new Question('Trip Criteria Expression');
-
-            $question->setValidator(function (?string $answer) {
-                if (empty($answer)) {
-                    throw new RuntimeException('This value is required.');
-                }
-
-                $errorMessage = $this->tripCriteriaService->lint($answer);
-
-                if ($errorMessage !== null) {
-                    throw new RuntimeException("Invalid expression: $errorMessage");
-                }
-
-                return $answer;
-            });
-
-            $tripCriteriaExpression = $io->askQuestion($question);
+            $tripCriteriaExpression = $io->askTripCriteriaExpression(
+                'Trip Criteria Expression',
+                $this->tripCriteriaService
+            );
         }
 
         $assigneeType = null;

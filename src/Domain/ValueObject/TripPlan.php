@@ -5,12 +5,14 @@ namespace App\Domain\ValueObject;
 use App\Domain\Entity\Dish;
 use App\Domain\Entity\GearItemImmutable;
 use App\Domain\Entity\Meal;
+use App\Domain\Entity\TaskImmutable;
 use App\Domain\Entity\TripImmutable;
 use App\Domain\Services\TripCriteriaService;
 use App\Domain\ValueObject\TripPlan\Chapter;
 use App\Domain\ValueObject\TripPlan\GearList;
 use App\Domain\ValueObject\TripPlan\MealPlan;
 use App\Domain\ValueObject\TripPlan\RecipeHardCopy;
+use App\Domain\ValueObject\TripPlan\TaskList;
 use App\Domain\ValueObject\TripPlan\TripOverview;
 use App\Domain\ValueObject\TripPlan\WeatherForecast;
 use Illuminate\Support\Collection;
@@ -21,14 +23,17 @@ readonly class TripPlan
     /**
      * @param TripImmutable $trip
      * @param GearItemImmutable[] $gear
+     * @param TaskImmutable[] $tasks
      * @param TripCriteriaService $tripCriteriaService
      */
     public function __construct(
         private TripImmutable $trip,
         private array $gear,
+        private array $tasks,
         private TripCriteriaService $tripCriteriaService
     ) {
         Assert::allIsInstanceOf($gear, GearItemImmutable::class);
+        Assert::allIsInstanceOf($tasks, TaskImmutable::class);
     }
 
     /**
@@ -41,6 +46,7 @@ readonly class TripPlan
                 new TripOverview($this->trip),
                 new WeatherForecast($this->trip),
                 new GearList($this->trip, $this->gear, $this->tripCriteriaService),
+                new TaskList($this->trip, $this->tasks, $this->tripCriteriaService),
             ]),
             new Chapter([
                 new WeatherForecast($this->trip),

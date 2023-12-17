@@ -12,5 +12,7 @@ interface RepositoryRegistryInterface
 
     public function getRecipeRepository(): RecipeRepositoryInterface;
 
+    public function getTaskRepository(): TaskRepositoryInterface;
+
     public function getTripRepository(): TripRepositoryInterface;
 }

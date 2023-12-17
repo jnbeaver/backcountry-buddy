@@ -4,6 +4,7 @@ namespace App\Domain\Services;
 
 use App\Component\Dompdf\DompdfFactory;
 use App\Domain\Entity\GearItemImmutable;
+use App\Domain\Entity\TaskImmutable;
 use App\Domain\Entity\TripImmutable;
 use App\Domain\ValueObject\TripPlan;
 use Clegginabox\PDFMerger\PDFMerger;
@@ -31,13 +32,15 @@ readonly class TripPlanService
      * @param string $filename
      * @param TripImmutable $trip
      * @param GearItemImmutable[] $gear
+     * @param TaskImmutable[] $tasks
      */
     public function create(
         string $filename,
         TripImmutable $trip,
-        array $gear
+        array $gear,
+        array $tasks
     ): void {
-        $tripPlan = new TripPlan($trip, $gear, $this->tripCriteriaService);
+        $tripPlan = new TripPlan($trip, $gear, $tasks, $this->tripCriteriaService);
         $chapterFilenames = new Collection();
 
         foreach ($tripPlan->getChapters() as $i => $chapter) {

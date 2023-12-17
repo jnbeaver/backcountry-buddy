@@ -2,6 +2,7 @@
 
 namespace App\Adapters\CLI;
 
+use App\Application\Services\TripCriteriaService;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use DateTime;
@@ -127,5 +128,26 @@ class Style extends SymfonyStyle
         }
 
         return parent::askQuestion($question);
+    }
+
+    public function askTripCriteriaExpression(string $question, TripCriteriaService $tripCriteriaService): string
+    {
+        $question = new Question($question, );
+
+        $question->setValidator(function (?string $answer) use ($tripCriteriaService) {
+            if (empty($answer)) {
+                throw new RuntimeException('This value is required.');
+            }
+
+            $errorMessage = $tripCriteriaService->lint($answer);
+
+            if ($errorMessage !== null) {
+                throw new RuntimeException("Invalid expression: $errorMessage");
+            }
+
+            return $answer;
+        });
+
+        return $this->askQuestion($question);
     }
 }
