@@ -11,12 +11,15 @@ class TripCriteriaService
 {
     private const TYPE = 'type';
 
+    private const LENGTH = 'length';
+
     private const LOW_TEMP = 'lowTemp';
 
     private const HIGH_TEMP = 'highTemp';
 
     public const TOKENS = [
         self::TYPE,
+        self::LENGTH,
         self::LOW_TEMP,
         self::HIGH_TEMP,
     ];
@@ -45,6 +48,7 @@ class TripCriteriaService
                 self::TOKENS,
                 [
                     $trip->getType()->name,
+                    $trip->getLength(),
                     $trip->getLowTemp(),
                     $trip->getHighTemp(),
                 ]

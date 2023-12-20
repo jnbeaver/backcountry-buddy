@@ -17,6 +17,8 @@ interface TripImmutable
 
     public function getEndDate(): DateTime;
 
+    public function getLength(): int;
+
     public function getLowTemp(): int;
 
     public function getHighTemp(): int;

@@ -125,6 +125,11 @@ class Trip implements TripImmutable
         return $this->endDate;
     }
 
+    public function getLength(): int
+    {
+        return Carbon::instance($this->endDate)->diffInDays($this->startDate);
+    }
+
     public function getLowTemp(): int
     {
         return $this->lowTemp;
