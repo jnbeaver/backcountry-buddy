@@ -26,10 +26,10 @@ class Dish implements DishImmutable
     #[ORM\Column(type: 'string')]
     private string $title;
 
-    #[ORM\Column(type: 'simple_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private array $ingredients;
 
-    #[ORM\Column(type: 'simple_array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private array $prep;
 
     #[ORM\JoinTable(name: 'dish_gear')]

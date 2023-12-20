@@ -35,6 +35,11 @@ class Markdown
         return "### $title\n";
     }
 
+    public static function header4(string $title): string
+    {
+        return "#### $title\n";
+    }
+
     public static function italic(string $text): string
     {
         return "*$text*";

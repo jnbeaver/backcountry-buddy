@@ -52,7 +52,7 @@ readonly class MealPlan implements Section
                             ->map(function (Meal $meal) {
                                 return (new Collection($meal->getDishes()))
                                     ->map(fn (Dish $dish) => $dish->getTitle())
-                                    ->join("\n");
+                                    ->join('<br>');
                             })
                     );
             });

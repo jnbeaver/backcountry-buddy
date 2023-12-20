@@ -11,6 +11,7 @@ use App\Domain\Services\TripCriteriaService;
 use App\Domain\ValueObject\TripPlan\Chapter;
 use App\Domain\ValueObject\TripPlan\GearList;
 use App\Domain\ValueObject\TripPlan\MealPlan;
+use App\Domain\ValueObject\TripPlan\MealPrep;
 use App\Domain\ValueObject\TripPlan\RecipeHardCopy;
 use App\Domain\ValueObject\TripPlan\TaskList;
 use App\Domain\ValueObject\TripPlan\TripOverview;
@@ -46,6 +47,7 @@ readonly class TripPlan
                 new TripOverview($this->trip),
                 new WeatherForecast($this->trip),
                 new GearList($this->trip, $this->gear, $this->tripCriteriaService),
+                new MealPrep($this->trip),
                 new TaskList($this->trip, $this->tasks, $this->tripCriteriaService),
             ]),
             new Chapter([

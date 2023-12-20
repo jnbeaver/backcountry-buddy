@@ -33,7 +33,7 @@ readonly class CreateGearItemHandler
             $command->name,
             new GearInclusionStrategy(
                 $command->inclusionFrequency,
-                $this->tripCriteriaService->create($command->tripCriteriaExpression)
+                $command->tripCriteriaExpression ? $this->tripCriteriaService->create($command->tripCriteriaExpression) : null
             ),
             $assignee
         );
