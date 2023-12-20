@@ -31,9 +31,4 @@ class RecipeRepository extends AbstractRepository implements RecipeRepositoryInt
     {
         parent::persistAndFlush($recipe);
     }
-
-    public function delete(Recipe $recipe): void
-    {
-        parent::remove($recipe);
-    }
 }

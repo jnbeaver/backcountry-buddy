@@ -41,7 +41,7 @@ class Trip implements TripImmutable
     #[ORM\JoinTable(name: 'trip_attendees')]
     #[ORM\JoinColumn(name: 'trip_id')]
     #[ORM\InverseJoinColumn(name: 'person_id')]
-    #[ORM\ManyToMany(targetEntity: Person::class)]
+    #[ORM\ManyToMany(targetEntity: Person::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $attendees;
 
     #[ORM\OneToMany(mappedBy: 'trip', targetEntity: Meal::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

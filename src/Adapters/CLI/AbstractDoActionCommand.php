@@ -30,7 +30,7 @@ abstract class AbstractDoActionCommand extends Command
             ->last(HandledStamp::class)
             ->getResult();
 
-        $io->writeln($this->getActionSuccessMessage($result));
+        $io->writeln($this->getActionSuccessMessage($result ?? (object) []));
 
         return 0;
     }

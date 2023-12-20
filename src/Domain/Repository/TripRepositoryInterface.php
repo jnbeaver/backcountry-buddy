@@ -20,4 +20,6 @@ interface TripRepositoryInterface
     public function findUniqueLocations(): array;
 
     public function save(Trip $trip): void;
+
+    public function delete(Trip $trip): void;
 }

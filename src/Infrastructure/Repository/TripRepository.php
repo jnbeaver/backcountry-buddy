@@ -34,4 +34,9 @@ class TripRepository extends AbstractRepository implements TripRepositoryInterfa
     {
         parent::persistAndFlush($trip);
     }
+
+    public function delete(Trip $trip): void
+    {
+        parent::removeAndFlush($trip);
+    }
 }

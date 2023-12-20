@@ -26,7 +26,11 @@ abstract class AbstractRepository extends ServiceEntityRepository
         }
 
         if (!$entity) {
-            throw new EntityNotFoundException($this->_class, $value, $name ?? $property);
+            throw new EntityNotFoundException(
+                $this->getClassMetadata()->getName(),
+                $value,
+                $name ?? $property
+            );
         }
 
         return $entity;
@@ -43,8 +47,11 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $em->flush();
     }
 
-    protected function remove(object $entity): void
+    protected function removeAndFlush(object $entity): void
     {
-        $this->getEntityManager()->remove($entity);
+        $em = $this->getEntityManager();
+
+        $em->remove($entity);
+        $em->flush();
     }
 }

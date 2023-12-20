@@ -22,6 +22,4 @@ interface RecipeRepositoryInterface
     public function findOrFailByUrl(string $url): Recipe;
 
     public function save(Recipe $recipe): void;
-
-    public function delete(Recipe $recipe): void;
 }
