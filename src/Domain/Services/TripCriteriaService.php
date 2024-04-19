@@ -42,6 +42,10 @@ class TripCriteriaService
 
     public function evaluate(TripCriteria $criteria, Trip $trip): bool
     {
+        if (!$criteria->getParsedExpression()) {
+            return true;
+        }
+
         return $this->expressionLanguage->evaluate(
             $criteria->getParsedExpression(),
             array_combine(
