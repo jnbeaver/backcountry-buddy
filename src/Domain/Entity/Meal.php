@@ -30,7 +30,7 @@ class Meal
     #[ORM\JoinTable(name: 'meal_dishes')]
     #[ORM\JoinColumn(name: 'meal_id')]
     #[ORM\InverseJoinColumn(name: 'dish_id')]
-    #[ORM\ManyToMany(targetEntity: Dish::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Dish::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $dishes;
 
     #[ORM\Column(type: 'datetime')]
