@@ -72,7 +72,7 @@ class Trip implements TripImmutable
         $this->highTemp = $highTemp;
         $this->attendees = new ArrayCollection($attendees);
         $this->meals = new ArrayCollection();
-        $this->createdAt = Carbon::now();
+        $this->createdAt = $this->updatedAt = Carbon::now();
     }
 
     public function addMeal(DateTime $date, MealType $type, array $dishes): void
